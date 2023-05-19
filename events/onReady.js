@@ -1,15 +1,22 @@
-require('dotenv').config();
+require('dotenv').config()
 // Node's native file system module. fs is used to read the commands directory and identify our command files.
-const fs = require('node:fs');
+const fs = require('node:fs')
 // Node's native path utility module. path helps construct paths to access files and directories. One of the advantages of the path module is that it automatically detects the operating system and uses the appropriate joiners.
-const path = require('node:path');
-//const client = require('../index');
-const { REST, Routes, Collection } = require('discord.js');
+const path = require('node:path')
+const { REST, Routes, Collection } = require('discord.js')
 const axios = require('axios'); // Required for getXRP example below
+//const { getBasePrice, baseUSD } = require('../main/getBasePrice')
+const { setPresence } = require('../main/setPresence')
+const { osCurrentPrice } = require('../main/getTokenPrice')
 
-function onReady(client) {
+async function onReady(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`)
-    
+
+    let guild = client.guilds.cache.get(`${process.env.GUILD_ID}`)
+    let member = guild.members.me
+    let red = guild.roles.cache.find(role => role.name === 'tickers-red')
+    let green = guild.roles.cache.find(role => role.name === 'tickers-green')
+
     client.commands = new Collection();
 
     const commands = [];
@@ -22,10 +29,10 @@ function onReady(client) {
         const command = require(filePath);
         // Set a new item in the Collection with the key as the command name and the value as the exported module
         if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-            commands.push(command.data.toJSON());
+            client.commands.set(command.data.name, command)
+            commands.push(command.data.toJSON())
         } else {
-            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`)
         }
     }
 
@@ -44,19 +51,42 @@ function onReady(client) {
 			    { body: commands },
 		    );
 
-		    console.log(`Successfully loaded ${data.length} application (/) commands.`);
+		    console.log(`Successfully loaded ${data.length} application (/) commands.`)
 	    } catch (error) {
 		    // Catch and log any errors.
-		    console.error(error);
+		    console.error(error)
 	    }
     })();
 
     // This is an example of how to run a function based on a time value
     // In this example, getting XRP price and updating it every 5 minutes
-    getXRPToken(); 
-    setInterval(getXRPToken, Math.max(1, 5 || 1) * 60 * 1000);
-    
-};
+    //getXRP().catch((error) => {
+    //    console.error('Error:', error)
+    //})
+    //setInterval(getXRP, Math.max(1, 5 || 1) * 60 * 1000)
+
+    // Same but this is using the exported function which is using ethers
+    /*
+    getPrice().catch((error) => {
+        console.error('Error:', error)
+    })
+    */
+    setPresence(red, green, member).catch((error) => {
+        console.error('Error:', error)
+    })
+    osCurrentPrice().catch((error) => {
+        console.error('Error:', error)
+    })
+    //setInterval(getPrice, Math.max(1, 5 || 1) * 60 * 1000)
+}
+
+/*
+async function getPrice() {
+    const baseUSD = await getBasePrice()
+    let baseToken = process.env.BASE_TOKEN.toUpperCase()
+    console.log(`${baseToken} current price:`, baseUSD)
+}
+*/
 
 async function getXRP() {
     await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ripple`).then(res => {
@@ -69,13 +99,9 @@ async function getXRP() {
             }
             //return;
         }).catch(err => {
-            console.log("An error with the Coin Gecko api call: ", err.response.status, err.response.statusText);
+            console.log("An error with the Coin Gecko api call: ", err.response.status, err.response.statusText)
     });
 };
-
-async function getXRPToken() {
-    await getXRP();
-}
 
 module.exports = { 
     onReady
