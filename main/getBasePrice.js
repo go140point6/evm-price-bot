@@ -25,7 +25,7 @@ async function getCurrentPrice(ftsoRegistryAddress) {
     const results = await registryFtsoInstance["getCurrentPriceWithDecimals(string)"](`${process.env.BASE_TOKEN}`.toUpperCase());
     let decimals = Number(results._assetPriceUsdDecimals);
     let baseUSD = Number(results._price) / 10 ** decimals;
-    return baseUSD;
+    return baseUSD
   } catch (error) {
     console.log('Error:', error);
   }
@@ -42,7 +42,8 @@ async function getBasePrice() {
     const result = await registryContractInstance.functions.getContractAddressByName("FtsoRegistry");
     const ftsoRegistryAddress = result[0];
     let baseUSD = await getCurrentPrice(ftsoRegistryAddress);
-    return baseUSD;
+    //console.log(`${base} token is ${process.env.CURRENCY_SYMBOL}${baseUSD}`) 
+    return baseUSD
   } catch (error) {
     console.log('Error'. error)
   }

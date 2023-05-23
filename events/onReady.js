@@ -4,10 +4,7 @@ const fs = require('node:fs')
 // Node's native path utility module. path helps construct paths to access files and directories. One of the advantages of the path module is that it automatically detects the operating system and uses the appropriate joiners.
 const path = require('node:path')
 const { REST, Routes, Collection } = require('discord.js')
-const axios = require('axios'); // Required for getXRP example below
-//const { getBasePrice, baseUSD } = require('../main/getBasePrice')
 const { setPresence } = require('../main/setPresence')
-const { osCurrentPrice } = require('../main/getTokenPrice')
 
 async function onReady(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`)
@@ -58,50 +55,15 @@ async function onReady(client) {
 	    }
     })();
 
-    // This is an example of how to run a function based on a time value
-    // In this example, getting XRP price and updating it every 5 minutes
-    //getXRP().catch((error) => {
-    //    console.error('Error:', error)
-    //})
-    //setInterval(getXRP, Math.max(1, 5 || 1) * 60 * 1000)
-
-    // Same but this is using the exported function which is using ethers
-    /*
-    getPrice().catch((error) => {
+    setPresence(client, red, green, member).catch((error) => {
         console.error('Error:', error)
     })
-    */
-    setPresence(red, green, member).catch((error) => {
-        console.error('Error:', error)
-    })
-    osCurrentPrice().catch((error) => {
-        console.error('Error:', error)
-    })
-    //setInterval(getPrice, Math.max(1, 5 || 1) * 60 * 1000)
+    setInterval(() => {
+        setPresence(client, red, green, member).catch((error) => {
+            console.error('Error:', error)
+        })
+    }, Math.max(1, 1 || 1) * 60 * 1000) // set the 2nd digit in Math.max to however many minutes you want the function to run (default here is 5 minutes)
 }
-
-/*
-async function getPrice() {
-    const baseUSD = await getBasePrice()
-    let baseToken = process.env.BASE_TOKEN.toUpperCase()
-    console.log(`${baseToken} current price:`, baseUSD)
-}
-*/
-
-async function getXRP() {
-    await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ripple`).then(res => {
-               if (res.data && res.data[0].current_price) {
-                const currentXRP = res.data[0].current_price.toFixed(4) || 0 
-                console.log("XRP current price: " + currentXRP);
-                module.exports.currentXRP = currentXRP;
-            } else {
-                console.log("Error loading coin data")
-            }
-            //return;
-        }).catch(err => {
-            console.log("An error with the Coin Gecko api call: ", err.response.status, err.response.statusText)
-    });
-};
 
 module.exports = { 
     onReady
