@@ -5,6 +5,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { REST, Routes, Collection } = require('discord.js')
 const { setPresence } = require('../main/setPresence')
+const { createArrays } = require('../main/createArrays')
 
 async function onReady(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`)
@@ -55,14 +56,20 @@ async function onReady(client) {
 	    }
     })();
 
-    setPresence(client, red, green, member).catch((error) => {
-        console.error('Error:', error)
+    // Create the array of tokens and relavent information from the .csv, only need this once, if tokens added restart to recreate.
+    createArrays()
+    .then(({ tokenArray, dexArray }) => {
+        setPresence(client, red, green, member, tokenArray, dexArray)    
     })
+    .catch((error) => {
+        console.log('Error:', error)
+    })
+
     setInterval(() => {
-        setPresence(client, red, green, member).catch((error) => {
+        setPresence(client, red, green, member, tokenArray, dexArray).catch((error) => {
             console.error('Error:', error)
         })
-    }, Math.max(1, 1 || 1) * 60 * 1000) // set the 2nd digit in Math.max to however many minutes you want the function to run (default here is 5 minutes)
+    }, Math.max(1, 5 || 1) * 60 * 1000) // set the 2nd digit in Math.max to however many minutes you want the function to run (default here is 5 minutes)
 }
 
 module.exports = { 

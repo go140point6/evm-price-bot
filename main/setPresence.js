@@ -14,27 +14,17 @@ var arrow = mid
 var lastPrice
 
 async function setPresence(client, red, green, member) {
-    //console.log("From setPresence:", red.name)
-    //console.log("From setPresence:", green.name)
 
     const baseUSD = await getBasePrice()
-    //console.log(`setPresenceFunc:`, baseUSD)
     console.log(`${base} token is ${process.env.CURRENCY_SYMBOL}${baseUSD}`) 
-    const { avgUSDTokenPrice, avgBaseTokenPrice } = await processDexArray()
-    //console.log(avgUSDTokenPrice)
-    //console.log(avgBaseTokenPrice)
-    //console.log(`setPresenceFunc:`, avgUSDTokenPrice)
-    //getTokenPrice(baseUSD, avgUSDTokenPrice)
+    const { avgUSDTokenPrice, avgBaseTokenPrice } = await processDexArray(tokenArray, dexArray)
 
     if (typeof lastPrice === 'undefined') {
         //console.log('lastPrice is undefined - ok first run')
         clearRoles(red, green, member)
         arrow = mid
         lastPrice = avgUSDTokenPrice
-        //console.log(lastPrice)
     } else {
-        //console.log('avgUSDTokenPrice:', avgUSDTokenPrice)
-        //console.log('lastPrice:', lastPrice)
         if (avgUSDTokenPrice > lastPrice) {
             console.log(`${token} price is up`)
             arrow = up
@@ -49,8 +39,6 @@ async function setPresence(client, red, green, member) {
             console.log(`${token} price is the same`)
         }
     }
-
-    //console.log(`lastPrice:`, lastPrice)
 
     let symbol = `${process.env.PAIR_TOKEN.toUpperCase()}`
 
@@ -84,16 +72,16 @@ async function setRed(red, green, member) {
 }
 
 async function setGreen(red, green, member) {
-    //console.log('Setting green role now...')
+    console.log('Setting green role now...')
     await clearRoles(red, green, member)
     await member.roles.add(green)
     let greenRole = await member.roles.cache.some(role => role.name === ('tickers-green'))
-    //console.log ('Attempted adding of greenRole, if successful, this should be true:', greenRole)
+    console.log ('Attempted adding of greenRole, if successful, this should be true:', greenRole)
     if (!greenRole) {
-       //console.log ('ERROR, still showing false for greenRole... trying again...')
+       console.log ('ERROR, still showing false for greenRole... trying again...')
        await (member.roles.add(green))
        let greenRole = await member.roles.cache.some(role => role.name === ('tickers-green'))
-       //console.log ('Attempted 2nd adding of greenRole, if successful, this should be true:', greenRole)
+       console.log ('Attempted 2nd adding of greenRole, if successful, this should be true:', greenRole)
     }
 }
 

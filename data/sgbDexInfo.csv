@@ -1,4 +1,4 @@
-nick,router,abi
-os,0x73E93D9657E6f32203f900fe1BD81179a5bf6Ce4,oracleSwapRouter.abi
-pg,0x6591cf4E1CfDDEcB4Aa5946c033596635Ba6FB0F,pangolinRouter.abi
-bz,0xAfcED6d85416bC3a3158563B087DB305F40FbaF3,blazeSwapRouter.abi
+name,router,abi
+OracleSwap,0x73E93D9657E6f32203f900fe1BD81179a5bf6Ce4,oracleSwapRouter.abi
+Pangolin,0x6591cf4E1CfDDEcB4Aa5946c033596635Ba6FB0F,pangolinRouter.abi
+BlazeSwap,0xAfcED6d85416bC3a3158563B087DB305F40FbaF3,blazeSwapRouter.abi

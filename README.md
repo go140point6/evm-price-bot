@@ -1,7 +1,9 @@
 # EVM-compatible Price Status Discord Bot
 
+Currently tested with Songbird, next up is Flare and XinFin.
+
 This bot will update its status message:
-1. With the current price
+1. With the current price.
 2. Changing colors to denote an increase or decrease from last check, if any
 3. Changing arrow direction to denote and increase or decrease from last check, if any
 
